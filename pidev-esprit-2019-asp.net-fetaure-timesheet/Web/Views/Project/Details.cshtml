@@ -1,0 +1,335 @@
+﻿@model Data.Project
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/Default/Admin/_DefaultLayout.cshtml";
+}
+
+@{
+    IEnumerable<Data.Ticket> listTikets = Web.Controllers.Timesheet.TicketController.getListTicketsByProject(Model.id);
+    var nbToDo = Web.Controllers.Timesheet.TicketController.countToDoTickets(listTikets);
+    var nbIn_Progress = Web.Controllers.Timesheet.TicketController.countInProgressTickets(listTikets);
+    var nbDone = Web.Controllers.Timesheet.TicketController.countDoneTickets(listTikets);
+    var progress = Web.Controllers.Timesheet.ProjectController.getProgress(listTikets).ToString("N2");
+
+
+}
+<div class="content-wrapper">
+    <div class="content-heading">
+        <div>
+            Project Details
+            <small data-localize="dashboard.WELCOME">
+                <div>
+                    <p>
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+                        @Html.ActionLink("Back to List", "Index")
+                    </p>
+                </div>
+            </small>
+        </div>
+    </div>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xl-5">
+
+
+                <style>
+                    .scrollspy-example-2 {
+                        position: relative;
+                        height: 220px;
+                        overflow: auto;
+                    }
+                </style>
+                <div class="card card-default mb-4">
+                    <div class="card-header">Dtails of Project</div>
+                    <div class="row">
+                        <div class="col-4">
+                            <nav class="navbar navbar-light bg-light flex-column" id="navbar-example3">
+                                <a class="navbar-brand" href="#">Project</a>
+                                <nav class="nav nav-pills flex-column">
+                                    <a class="nav-link active" href="#Title">Title</a>
+                                    <a class="nav-link" href="#Status"> Status </a>
+                                    <a class="nav-link" href="#Description"> Description </a>
+                                    <a class="nav-link" href="#Team"> Team </a>
+
+                                </nav>
+                            </nav>
+                        </div>
+                        <div class="col-8">
+                            <div class="scrollspy-example-2" data-spy="scroll" data-target="#navbar-example3" data-offset="0">
+                                <h4 id="Title">Title</h4>
+                                <p>
+                                    @Html.DisplayFor(model => model.title)
+                                </p>
+                                <h4 id="Status">Status</h4>
+                                @switch (Model.status)
+                                {
+                                    case "ToDo":
+                                        <p>
+                                            This project is not started yet.
+                                            would you like to start it ?
+                                            <br/>
+                                            <button class="btn btn-success btn-lg" type="button" onclick="javascript:startProject(@Model.id)"> Start</button>
+
+                                        </p>
+                                        break;
+                                    case "In_Progress":
+                                        <p>
+                                            This project is under construction.
+                                        </p>
+                                        break;
+                                    case "Done":
+                                        <p>
+                                            This project is done.
+                                        </p>
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+
+                                <h4 id="Description">Description</h4>
+                                <p>
+                                    @Html.DisplayFor(model => model.description)
+                                </p>
+                                <h4 id="Team">Team</h4>
+                                <p>
+                                    @if (Model.team != null)
+                                    {
+                                    <p>
+                                        @Html.DisplayFor(model => model.team.teamName) du Departement @Html.DisplayFor(model => model.team.departementEnum)
+                                    </p>
+                                    }
+                                    else
+                                    {
+                                        <p>
+                                            @using (Html.BeginForm())
+                                            {
+                                                <div class="form-group">
+                                                  <label> 
+                                                      Assign This Project To a Team
+                                                    </label>  
+                                                   
+                                                       <select class="form-control" id="select2-1" name="TeamSelected">
+                                                            <option value="">-- Select One Team --</option>
+
+                                                           @foreach (var team in ViewBag.SelectListItem)
+                                                           {
+                                                            <option value="@team.Value">@team.Text</option>
+                                                           }
+                                                           
+                                                           </select>
+                                                    <a href=@Url.Action("setTeam", "Project",new { id = Model.id }) class="mb-1 btn btn-outline-secondary" >Set Team </a>
+</div>
+
+                                            }
+
+                                        </p>
+                                    }
+                                    </p>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer"></div><!-- END card-footer-->
+                    </div>
+                </div>
+
+
+                <div class="col-xl-2">
+                    <div class="card card-default">
+                        <div class="card-header"> Project Progress</div>
+                        <div class="card-body">
+                            <div class="text-center py-2">
+
+                                <div class="easypie-chart easypie-chart-lg  progress-bar-striped progress-bar-animated"
+                                     data-easypiechart="" data-percent="@progress"
+                                     data-animate="{&quot;duration&quot;: &quot;800&quot;, &quot;enabled&quot;: &quot;true&quot;}"
+                                     data-bar-color="#23b7e5" data-track-color="rgba(200,200,200,0.4)" data-scale-color="false" data-line-width="10" data-line-cap="round" data-size="160">
+                                    <span>
+                                        @progress%
+                                    </span>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card-footer"></div><!-- END card-footer-->
+                    </div>
+                </div>
+                @if (Model.team != null)
+                {
+                    <div class="col-xl-5">
+                        <div class="card card-default">
+                            <div class="card-header">
+                                <div class="px-2 float-right badge badge-danger">5</div>
+                                <div class="px-2 mr-2 float-right badge badge-success">12</div>
+                                <div class="card-title" style="font-size:20px">
+                                    <em class="fa fa-users fa-2x"></em>
+
+
+
+                                </div>
+                            </div>
+                            <!-- START list group-->
+                            <div class="list-group" data-height="200" data-scrollable="">
+
+
+                                @if (Model.team != null)
+                        {
+                            IEnumerable<Data.user> employees = Web.Controllers.Timesheet.EmployeeController.getListEmployeesByTeamID(Model.team.id);
+
+                             <!-- START list group item-->
+                            foreach (var item in employees)
+                            {
+                           <!-- START list group item-->
+                        <div class="list-group-item list-group-item-action">
+                            <div class="media">
+                                <img class="align-self-start mx-2 circle thumb48" src="~/fonts/images/@item.image" alt="Image">
+                                <div class="media-body text-truncate">
+                                    <p class="mb-1">
+                                        <strong class="text-primary">
+                                            <span> @item.firstName @item.lastName </span>
+                                        </strong>
+                                    </p>
+                                    <p class="mb-1 text-sm"> nous a rejoint depuis | @item.creationDate </p>
+                                </div>
+                                <div class="ml-auto">
+                                    <small class="text-muted ml-2">
+                                        has worked on this project for :
+                                        <strong style="font-style:oblique">  @Web.Controllers.Timesheet.ProjectController.WorkedHoursPerEmployeeID(Model.id, item.id) h </strong>
+
+                                    </small>
+                                </div>
+                            </div>
+                        </div><!-- END list group item-->
+                            }
+                        }
+
+
+                            </div>
+                            <!-- START card footer-->
+                            <div class="card-footer"></div><!-- END card-footer-->
+                        </div><!-- END list group-->
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <!-- ticket Cards -->
+        <div class="row">
+                <div class="col-xl-1"></div>
+                <div class="col-xl col-md-6">
+                    <!-- START card-->
+                    <div class="card flex-row align-items-center align-items-stretch border-0">
+                        <div class="col-4 d-flex align-items-center bg-primary-dark justify-content-center rounded-left">
+                            <em class="fa fa-list-alt fa-3x"></em>
+                        </div>
+                        <div class="col-8 py-3 bg-primary rounded-right">
+                            <div class="h2 mt-0"> @nbToDo <small> Tickets</small></div>
+                            <div class="text-uppercase">To Do </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl col-md-6">
+                    <!-- START card-->
+                    <div class="card flex-row align-items-center align-items-stretch border-0">
+                        <div class="col-4 d-flex align-items-center bg-purple-dark justify-content-center rounded-left">
+                            <em class="fa fa-spinner fa-3x"></em>
+                        </div>
+                        <div class="col-8 py-3 bg-purple rounded-right">
+                            <div class="h2 mt-0"> @nbIn_Progress <small> Tickets</small></div>
+                            <div class="text-uppercase">In Progress </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl col-lg-6 col-md-12">
+                    <!-- START card-->
+                    <div class="card flex-row align-items-center align-items-stretch border-0">
+                        <div class="col-4 d-flex align-items-center bg-green-dark justify-content-center rounded-left">
+                            <em class="fa fa-check-square fa-3x"></em>
+                        </div>
+                        <div class="col-8 py-3 bg-green rounded-right">
+                            <div class="h2 mt-0"> @nbDone <small> Tickets</small></div>
+                            <div class="text-uppercase">Done </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-1"></div>
+             
+        </div>
+        <!-- end ticket Cards -->
+        <!-- ticket table -->
+        <div class="card">
+            <div class="card-header text-white bg-success">
+                <center>
+                    <h2>
+                        Ticket List
+                    </h2>
+                </center>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped my-4 w-100 dataTable no-footer dtr-inline" id="datatable1" style="align-items:center">
+                    <thead>
+                        <tr>
+                            <th>
+                                Title
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Employe
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in listTikets)
+                        {
+                            <tr>
+                                <td>
+                                    @item.title
+                                </td>
+                                <td>
+                                    @item.description
+                                </td>
+                                <td>
+                                    @item.status
+                                </td>
+                                <td>
+                                    @if (item.employee_id != null)
+                                    {
+                                        @item.user.username
+                                    }
+                                    else
+                                    { @item.employee_id }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- end ticket table -->
+
+
+
+        <script>
+
+            function startProject(id) {
+                alertify.confirm('Start this Project', 'are you sure to start this project ?', function () {
+                    window.location.href = '@Url.Action("startProject", "Project")/' + id;
+
+                }, null);
+            }
+
+        </script>
+
+
+    </div>

@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    
+     @Styles.Render("~/Content/Default/vendor/@fortawesome/fontawesome-free/css/brands.css")
+     @Styles.Render("~/Content/Default/vendor/@fortawesome/fontawesome-free/css/regular.css")
+     @Styles.Render("~/Content/Default/vendor/@fortawesome/fontawesome-free/css/solid.css")
+     @Styles.Render("~/Content/Default/vendor/@fortawesome/fontawesome-free/css/fontawesome.css")
+     @Styles.Render("~/Content/Default/vendor/simple-line-icons/css/simple-line-icons.css")
+     @Styles.Render("~/Content/Default/vendor/animate.css/animate.css")
+     @Styles.Render("~/Content/Default/vendor/whirl/dist/whirl.css")
+    
+     @Styles.Render("~/Content/Default/css/bootstrap.css" )
+     @Styles.Render("~/Content/Default/css/app.css" )
+</head>
+<body>
+    
+    <div class="wrapper">
+        <!-- top navbar-->
+        <header class="topnavbar-wrapper">
+            <!-- START Top Navbar-->
+            <nav class="navbar topnavbar">
+                <!-- START navbar header-->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#/">
+                        <div class="brand-logo"><img class="img-fluid" src="~/Content/Default/img/logo.png" alt="App Logo"></div>
+                        <div class="brand-logo-collapsed"><img class="img-fluid" src="~/Content/Default/img/logo-single.png" alt="App Logo"></div>
+                    </a>
+                </div><!-- END navbar header-->
+                
+                <!-- START Right Navbar-->
+                <ul class="navbar-nav flex-row">
+                    <!-- Search icon-->
+                    <li class="nav-item"><a class="nav-link" href="#" data-search-open=""><em class="icon-magnifier"></em></a></li><!-- Fullscreen (only desktops)-->
+                    <li class="nav-item d-none d-md-block"><a class="nav-link" href="#" data-toggle-fullscreen=""><em class="fas fa-expand"></em></a></li><!-- START Alert menu-->
+                    
+                    <!-- START Offsidebar button-->
+                    <li class="nav-item"><a class="nav-link" href="#" data-toggle-state="offsidebar-open" data-no-persist="true"><em class="icon-notebook"></em></a></li><!-- END Offsidebar menu-->
+                </ul><!-- END Right Navbar-->
+                <!-- START Search form-->
+                <form class="navbar-form" role="search" action="search.html">
+                    <div class="form-group">
+                        <input class="form-control" type="text" placeholder="Type and hit enter ...">
+                        <div class="fas fa-times navbar-form-close" data-search-dismiss=""></div>
+                    </div><button class="d-none" type="submit">Submit</button>
+                </form><!-- END Search form-->
+            </nav><!-- END Top Navbar-->
+        </header><!-- sidebar-->
+ 
+        <section class="section-container">
+            @RenderBody()
+        </section>
+
+        </div>
+            @Scripts.Render("~/Content/Default/vendor/modernizr/modernizr.custom.js" )<!-- STORAGE API-->
+            @Scripts.Render("~/Content/Default/vendor/js-storage/js.storage.js")<!-- SCREENFULL-->
+            @Scripts.Render("~/Content/Default/vendor/screenfull/dist/screenfull.js")<!-- i18next-->
+            @Scripts.Render("~/Content/Default/vendor/i18next/i18next.js")
+            @Scripts.Render("~/Content/Default/vendor/i18next-xhr-backend/i18nextXHRBackend.js")
+            @Scripts.Render("~/Content/Default/vendor/jquery/dist/jquery.js")
+            @Scripts.Render("~/Content/Default/vendor/popper.js/dist/umd/popper.js")
+            @Scripts.Render("~/Content/Default/vendor/bootstrap/dist/js/bootstrap.js")<!-- =============== PAGE VENDOR SCRIPTS ===============-->
+            <!-- =============== APP SCRIPTS ===============-->
+            @Scripts.Render("~/Content/Default/js/app.js")
+</body>
+<footer class="footer-container">
+    <span>&copy; 2019 - advyTeam</span>
+    </footer>
+</html>

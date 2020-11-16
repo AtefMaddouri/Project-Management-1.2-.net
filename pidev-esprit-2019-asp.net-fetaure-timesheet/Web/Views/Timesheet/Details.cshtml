@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/Default/Admin/_DefaultLayout.cshtml";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+
+
+<!-- Page content-->
+<div class="content-wrapper">
+    <div class="content-heading">
+        <div>
+            Employee's Ticket Report
+            <small data-localize="dashboard.WELCOME">
+                <div>
+                    <p>
+                        @Html.ActionLink("Back to Report", "Report")
+                    </p>
+                </div>
+            </small>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row" style="margin-bottom:20px">
+            <div class="col-md-4">
+                <!-- START card-->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 text-center"><img class="circle thumb128" src="~/fonts/images/@ViewBag.employee.image" alt="Image"></div>
+                            <div class="col-6">
+                                <h3 class="mt-0">@ViewBag.employee.firstName @ViewBag.employee.lastName</h3>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-1"><em class="fas fa-birthday-cake fa-fw"></em> @ViewBag.employee.dateOfBirth</li>
+                                    
+                                    <li class="mb-1"><em class="fa fa-envelope fa-fw"></em> @ViewBag.employee.email </li>
+                                    <li class="mb-1"><em class="fa fa-users fa-fw"></em> @ViewBag.employee.team.teamName </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body bg-inverse">
+                        <div class="row text-center">
+                            <div class="col-xl">
+                                <p class="m-0 h3">@ViewBag.TotalEstimation</p>
+                                <p class="m-0 text-muted">Total Estimated </p>
+                            </div>
+                            <div class="col-xl">
+                                <p class="m-0 h3">@ViewBag.Gab </p>
+                                <p class="m-0 text-muted">GAB </p>
+                            </div>
+                            <div class="col-xl">
+                                <p class="m-0 h3"> @ViewBag.TotalDuration</p>
+                                <p class="m-0 text-muted">Finished IN</p>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- END card-->
+            </div>
+               
+
+
+                <div class="col-md-8">
+                    <div class="card">
+                        <div style="position: relative; inset: 0px; font-size: smaller; color: rgb(84, 84, 84);" id="chartContainer">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+            $(document).ready(function () {
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    animationEnabled: true,
+                    title: {
+                        text: "Ticket Done"
+                    },
+                    axisY: {
+                        title: "Hours",
+                        valueFormatString: "##",
+                    },
+                    data: [
+                    {
+                        type: "bar",
+                        legendText: "Estimated Duration",
+                        yValueFormatString: "##",
+                        showInLegend: "true",
+
+
+                       dataPoints: @Html.Raw(ViewBag.DataPoints1),
+                    }, {
+                        type: "bar",
+                        legendText: "Finished In",
+                        showInLegend: "true",
+                       // indexLabel: "#bn",
+                        yValueFormatString: "##",
+                        indexLabelFormatString: "##",
+                        indexLabelPlacement: "outside",
+
+
+                        dataPoints: @Html.Raw(ViewBag.DataPoints2),
+                    }
+
+                    ]
+                });
+                chart.render();
+            });
+</script>

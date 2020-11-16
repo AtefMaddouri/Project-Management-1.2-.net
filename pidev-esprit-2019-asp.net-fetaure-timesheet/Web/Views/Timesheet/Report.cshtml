@@ -1,0 +1,192 @@
+﻿
+@{
+    ViewBag.Title = "Timesheet Report";
+    Layout = "~/Views/Shared/Default/Admin/_DefaultLayout.cshtml";
+    var CurrentMonth = Web.Controllers.Timesheet.TimesheetController.getCurrentMonth();
+
+}
+
+
+<!-- Page content-->
+<div class="content-wrapper">
+    <div class="content-heading">
+
+        <div>
+            Timesheet Report
+            <small data-localize="dashboard.WELCOME">
+                @Html.ActionLink("Create New Project", "Create")
+            </small>
+
+        </div>
+    </div>
+    <div class="container-fluid" style="margin-top:10px">
+
+        <div class="row">
+            <div class="col-xl-9"></div>
+            <div class="col-xl-3 col-lg-6 col-md-12">
+                <!-- START date widget-->
+                <div class="card flex-row align-items-center align-items-stretch border-0">
+                    <div class="col-4 d-flex align-items-center bg-green justify-content-center rounded-left">
+                        <div class="text-center">
+                            <!-- See formats: https://docs.angularjs.org/api/ng/filter/date-->
+                            <div class="text-sm" data-now="" data-format="MMMM">November</div><br>
+                            <div class="h2 mt-0" data-now="" data-format="D">27</div>
+                        </div>
+                    </div>
+                    <div class="col-8 py-3 rounded-right">
+                        <div class="text-uppercase" data-now="" data-format="dddd">Wednesday</div><br>
+                        <div class="h2 mt-0" data-now="" data-format="h:mm">1:29</div>
+                        <div class="text-muted text-sm" data-now="" data-format="a">am</div>
+                    </div>
+                </div><!-- END date widget-->
+            </div>
+        </div>
+
+        <div class="row-col-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul style="height: 100%; width: 100%; overflow: hidden; overflow-x: scroll; display: flex;">
+                        @foreach (var month in ViewBag.months)
+                        {
+                                        var number = DateTime.ParseExact(month, "MMMM", System.Globalization.CultureInfo.CurrentCulture).Month;
+                                        var color = "none";
+                                        if (number == ViewBag.monthNumber) { color = "#6dd16e"; }
+
+                                        <a href=@Url.Action("Month", "Timesheet", new { month = month }) class="mb-1 btn btn-outline-secondary" style="background-color:@color">
+                                            <li style="display: inline-block; margin-left: 4px">
+                                                <div>
+                                                    <!-- Team Card-->
+                                                    <div class="card-body">
+                                                        <ul class="list-inline m-0">
+
+                                                            <li class="list-inline-item">
+                                                                @month
+                                                            </li>
+
+                                                        </ul>
+                                                    </div>
+                                                    <!-- end Team Card-->
+                                                </div>
+                                            </li>
+                                        </a>
+                                   
+
+                        }
+
+                    </ul>
+
+                </div>
+                </div>
+            </div>
+                <div class="row-col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-striped table-dark my-4 w-100 dataTable no-footer dtr-inline" id="datatable1" style="text-align:center; font-size:14px">
+                                <thead>
+                                    <tr>
+                                        <th style="column-width:200px" rowspan="2"></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th colspan="4">
+                                            <h3> Total Employee's Worked Hours Per Week  </h3>
+                                        </th>
+
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            CHOOSE THE MONTH
+                                        </th>
+                                        <th>
+                                            Month
+                                        </th>
+                                        <th>
+                                            <h4> Week 1 </h4>
+                                        </th>
+                                        <th>
+                                            <h4> Week 2 </h4>
+                                        </th>
+                                        <th>
+                                            <h4> Week 3 </h4>
+                                        </th>
+                                        <th>
+                                            <h4> Week 4 </h4>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in ViewBag.team)
+                                    {
+                                        var employees = Web.Controllers.Timesheet.TimesheetController.getEmployeeByTeamID(item.id);
+
+                                        <tr>
+                                            <td rowspan="@Web.Controllers.Timesheet.TimesheetController.getNbEmployeeByTeamID(item.id)">
+                                                <h3> @item.teamName </h3>
+                                            </td>
+
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+
+                                            <td rowspan="@Web.Controllers.Timesheet.TimesheetController.getNbEmployeeByTeamID(item.id)" style="column-width:500px">
+                                                <h2> @{
+                                                    var employeeOfMonth = Web.Controllers.Timesheet.TimesheetController.getEmployeeOfTheMonthByTeam(item.id);
+                                                        }
+                                                    @employeeOfMonth.firstName 
+                                                </h2>
+                                            </td>
+                                        </tr>
+
+                                        foreach (var emp in employees)
+                                        {
+                                            <tr onclick="goToDetails(@emp.id,@ViewBag.monthNumber)" style="">
+                                                <td>
+                                                    <img class="align-self-start mx-3 circle thumb64" src="~/fonts/images/@emp.image" alt="Image">
+                                                </td>
+                                                <td style="text-align:left">
+                                                    <h4>   @emp.firstName @emp.lastName </h4>
+                                                </td>
+                                                @for (var i = 1; i < 5; i++)
+                                                {
+                                                    var EmployeeWorkedHours = Web.Controllers.Timesheet.TimesheetController.getEmployeeWorkedHoursByWeek(emp.id, "week" + i);
+                                                    var TotalWorkedHours = Web.Controllers.Timesheet.TimesheetController.getTotalWorkedHoursByWeek("week" + i);
+                                                    int average = (int) ((EmployeeWorkedHours/TotalWorkedHours)*100);
+
+                                                    <td>
+                                                        <span> @EmployeeWorkedHours Hours</span>
+                                                        <div class="progress progress-xs">
+                                                            <div class="progress-bar-striped bg-success  progress-bar-animated" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width:@average%"></div>
+                                                        </div>
+                                                        <span> @TotalWorkedHours Hours</span>
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+    <script>
+
+    function goToDetails(id,Monthnumber) {
+        alertify.confirm('Report operation', 'are you sure to go Details ?', function () {
+            window.location.href = '@Url.Action("Details","Timesheet")?id=' + id + '&Monthnumber=' + Monthnumber;
+
+        }, null);
+    }
+
+    </script>
+
+
+
+        </div>
+
